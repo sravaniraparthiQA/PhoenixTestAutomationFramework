@@ -5,18 +5,18 @@ import static io.restassured.RestAssured.*;
 
 import java.io.IOException;
 
-import org.hamcrest.Matchers;
+import static org.hamcrest.Matchers.*;
 import org.testng.annotations.Test;
 
 import com.api.pojo.UserCredentials;
 
-import io.restassured.http.ContentType;
-import io.restassured.module.jsv.JsonSchemaValidator;
+import static io.restassured.http.ContentType.*;
+import static io.restassured.module.jsv.JsonSchemaValidator.*;
 
 public class LoginAPITest {
 
 	@Test
-	public void loginAPITest() throws IOException {
+	public void loginAPITest() {
 		//Rest Assured Code!
 		
 		UserCredentials userCreds = new UserCredentials("iamfd", "password");
@@ -24,9 +24,9 @@ public class LoginAPITest {
 		given()
 			.baseUri(getProperty("BASE_URI"))
 		.and()
-		.contentType(ContentType.JSON)
+		.contentType(JSON)
 		.and()
-		.accept(ContentType.JSON)
+		.accept(JSON)
 		.and()
 		.body(userCreds)
 		.log().uri()
@@ -38,11 +38,11 @@ public class LoginAPITest {
 		.then()
 		.log().all()
 		.statusCode(200)
-		.time(Matchers.lessThan(1500L))
+		.time(lessThan(1500L))
 		.and()
-		.body("message", Matchers.equalTo("Success"))
+		.body("message", equalTo("Success"))
 		.and()
-		.body(JsonSchemaValidator.matchesJsonSchemaInClasspath("response-schema/LoginResponseSchema.json"));
+		.body(matchesJsonSchemaInClasspath("response-schema/LoginResponseSchema.json"));
 	}
 
 }
