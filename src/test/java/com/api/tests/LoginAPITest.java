@@ -1,16 +1,13 @@
 package com.api.tests;
 
-import static com.api.utils.ConfigManager.*;
 import static io.restassured.RestAssured.*;
-
-import java.io.IOException;
 
 import static org.hamcrest.Matchers.*;
 import org.testng.annotations.Test;
 
 import com.api.pojo.UserCredentials;
+import com.api.utils.SpecUtil;
 
-import static io.restassured.http.ContentType.*;
 import static io.restassured.module.jsv.JsonSchemaValidator.*;
 
 public class LoginAPITest {
@@ -22,27 +19,14 @@ public class LoginAPITest {
 		UserCredentials userCreds = new UserCredentials("iamfd", "password");
 		
 		given()
-			.baseUri(getProperty("BASE_URI"))
-		.and()
-		.contentType(JSON)
-		.and()
-		.accept(JSON)
-		.and()
-		.body(userCreds)
-		.log().uri()
-		.log().method()
-		.log().headers()
-		.log().body()
+			.spec(SpecUtil.requestSpec(userCreds))
 		.when()
-		.post("login")
+			.post("login")
 		.then()
-		.log().all()
-		.statusCode(200)
-		.time(lessThan(1500L))
-		.and()
-		.body("message", equalTo("Success"))
-		.and()
-		.body(matchesJsonSchemaInClasspath("response-schema/LoginResponseSchema.json"));
+			.spec(SpecUtil.responseSpec_OK())
+			.body("message", equalTo("Success"))
+			.and()
+			.body(matchesJsonSchemaInClasspath("response-schema/LoginResponseSchema.json"));
 	}
 
 }
