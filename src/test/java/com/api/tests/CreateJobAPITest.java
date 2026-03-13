@@ -2,6 +2,11 @@ package com.api.tests;
 
 import static io.restassured.RestAssured.given;
 
+import static org.hamcrest.Matchers.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.testng.annotations.Test;
 
 import com.api.constant.Role;
@@ -12,6 +17,8 @@ import com.api.pojo.CustomerProduct;
 import com.api.pojo.Problems;
 import com.api.utils.SpecUtil;
 
+import io.restassured.module.jsv.JsonSchemaValidator;
+
 public class CreateJobAPITest {
 	
 	@Test
@@ -21,19 +28,24 @@ public class CreateJobAPITest {
 		
 		Customer customer = new Customer("Sravani", "Raparthi", "9618096697", "", "sravaniraparthis24@gmail.com", "");
 		CustomerAddress customerAddress = new CustomerAddress("Flat 206", "Pushkardham", "Hanuman Nagar", "Morampudi", "Navaram", "533107", "India", "Rajahmundry");
-		CustomerProduct customerProduct = new CustomerProduct("2025-04-13T18:30:00.000Z", "10565811391577", "10565811391577", "10565811391577", "2025-04-13T18:30:00.000Z", 1, 1);
+		CustomerProduct customerProduct = new CustomerProduct("2025-04-13T18:30:00.000Z", "10565811391522", "10565811391522", "10565811391522", "2025-04-13T18:30:00.000Z", 1, 1);
 		Problems problems = new Problems(2, "Battery issue");
-		Problems problemsArray[] = new Problems[1];
-		problemsArray[0]=problems;
+		List<Problems> problemsList = new ArrayList<Problems>();
+		problemsList.add(problems);
 		
-		CreateJobPayload createJobPayload = new CreateJobPayload(0, 2, 1, 1, customer, customerAddress, customerProduct, problemsArray);
+		CreateJobPayload createJobPayload = new CreateJobPayload(0, 2, 1, 1, customer, customerAddress, customerProduct, problemsList);
 		
 		given()
 			.spec(SpecUtil.requestSpecWithAuth(Role.FD, createJobPayload))
 		.when()
 			.post("/job/create")
 		.then()
-			.spec(SpecUtil.responseSpec_OK());
+			.spec(SpecUtil.responseSpec_OK())
+			.body(JsonSchemaValidator.matchesJsonSchemaInClasspath("response-schema/CreateJobAPIResponseSchema.json"))
+			.body("message", equalTo("Job created successfully. "))
+			.body("data.mst_service_location_id", equalTo(1))
+			.body("data.job_number", startsWith("JOB_"));
+		
 	}
 
 }
