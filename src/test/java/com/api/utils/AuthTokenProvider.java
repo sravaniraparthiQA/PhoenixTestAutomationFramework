@@ -6,8 +6,6 @@ import static com.api.constant.Role.QC;
 import static com.api.constant.Role.SUP;
 import static io.restassured.RestAssured.given;
 
-import java.io.IOException;
-
 import org.hamcrest.Matchers;
 
 import com.api.constant.Role;
