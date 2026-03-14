@@ -5,8 +5,6 @@ import static io.restassured.http.ContentType.JSON;
 import org.hamcrest.Matchers;
 
 import com.api.constant.Role;
-import com.api.request.model.UserCredentials;
-
 import static com.api.utils.ConfigManager.*;
 
 import io.restassured.builder.RequestSpecBuilder;
