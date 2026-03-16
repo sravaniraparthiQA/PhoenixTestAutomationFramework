@@ -20,12 +20,12 @@ public class ReadCSVFile_MapToPOJO {
 
 		//Write the code to map the CSV to POJO
 		
-		CsvToBean<UserPOJO> csvToBean = new CsvToBeanBuilder(csvReader)
-				.withType(UserPOJO.class)
+		CsvToBean<UserBean> csvToBean = new CsvToBeanBuilder(csvReader)
+				.withType(UserBean.class)
 				.withIgnoreEmptyLine(true)
 				.build();
 		
-		List<UserPOJO>  userList = csvToBean.parse();
+		List<UserBean>  userList = csvToBean.parse();
 		System.out.println(userList);
 		System.out.println(userList.get(0).getUsername());
 		System.out.println(userList.get(0).getPassword());
