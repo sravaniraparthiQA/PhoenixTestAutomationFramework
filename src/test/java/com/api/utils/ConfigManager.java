@@ -5,8 +5,6 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class ConfigManager {
-	// WAP to read the Properties file from
-	// src/test/resources/config/config.properties
 
 	// Special class in java Properties, help us read the properties of project
 	private static Properties prop = new Properties();
