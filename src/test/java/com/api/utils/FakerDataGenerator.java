@@ -18,15 +18,16 @@ public class FakerDataGenerator {
 
 	private static Faker faker = new Faker(new Locale("en-IND"));
 	private final static String COUNTRY = "India";
-	private final static Random random = new Random();
+	private final static Random RANDOM = new Random();
 	private final static int MST_SERVICE_LOCATION_ID = 0;
 	private final static int MST_PLATFORM_ID = 2;
 	private final static int MST_WARRENTY_STATUS_ID = 1;
 	private final static int MST_OEM_ID = 1;
 	private final static int PRODUCT_ID = 1;
 	private final static int MST_MODEL_ID = 1;
-	
-	private final static int VALID_PROBLEMS_ID[] = {1,2,3,4,5,6,7,8,9,10,11,12,15,16,17,19,20,22,24,26,28,29};
+
+	private final static int VALID_PROBLEMS_ID[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 16, 17, 19, 20, 22, 24,
+			26, 28, 29 };
 
 	private FakerDataGenerator() {
 		// private constructor!
@@ -55,19 +56,26 @@ public class FakerDataGenerator {
 					MST_WARRENTY_STATUS_ID, MST_OEM_ID, customer, customerAddress, customerProduct, problemsList);
 			payloadList.add(payload);
 		}
-		
+
 		return payloadList.iterator();
 	}
 
 	private static List<Problems> generateFakeProblemsList() {
 
-		int randomIndex = random.nextInt(VALID_PROBLEMS_ID.length);
-		String fakeRemark = faker.lorem().sentence(10);
-
-		Problems problems = new Problems(VALID_PROBLEMS_ID[randomIndex], fakeRemark);
-
+		int count = RANDOM.nextInt(3) + 1;
+		int randomIndex;
+		String fakeRemark;
+		Problems problems;
 		List<Problems> problemsList = new ArrayList<Problems>();
-		problemsList.add(problems);
+
+		for (int i = 1; i <= count; i++) { // to create mutiple problems, can create only max 3 problems
+			// Generating a random Problem ID and adding it to the list
+			randomIndex = RANDOM.nextInt(VALID_PROBLEMS_ID.length);
+			fakeRemark = faker.lorem().sentence(10);
+
+			problems = new Problems(VALID_PROBLEMS_ID[randomIndex], fakeRemark);
+			problemsList.add(problems); //
+		}
 
 		return problemsList;
 	}
