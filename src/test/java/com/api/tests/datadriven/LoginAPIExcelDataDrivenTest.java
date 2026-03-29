@@ -17,11 +17,11 @@ public class LoginAPIExcelDataDrivenTest {
 			dataProviderClass = com.dataproviders.DataProviderUtils.class, dataProvider = "LoginAPIExcelDataProvider" )
 	//After giving dataProviderClass & dataProvider the @Test methods become parameterized, hence we need to pass the parameters
 
-	public void loginAPITest(UserCredentials userCredentials) {
+	public void loginAPITest(UserBean userBean) {
 		//inside a list of dataProviderClass, each one in list is nothing but an ref variable of an UserBean object hence passing ref variable of UserBean type as parameter here
 		
 		given()
-			.spec(requestSpec(userCredentials))
+			.spec(requestSpec(userBean))
 		.when()
 			.post("login")
 		.then()
