@@ -18,11 +18,11 @@ import com.poiji.bind.Poiji;
 
 public class ExcelReaderUtil2 {
 
-	public static <T> Iterator<T> loadTestData(String sheetName, Class<T> clazz) {
+	public static <T> Iterator<T> loadTestData(String xlsxFile, String sheetName, Class<T> clazz) {
 		// APACHE POI OOXML LIBRARY
 
 		InputStream is = Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream("testData/PhoenixTestData.xlsx");
+				.getResourceAsStream(xlsxFile); //"testData/PhoenixTestData.xlsx"
 		XSSFWorkbook myWorkbook = null ;
 
 		try {
