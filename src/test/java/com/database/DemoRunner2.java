@@ -5,20 +5,20 @@ import java.sql.SQLException;
 public class DemoRunner2 {
 
 	public static void main(String[] args) throws SQLException {
-		DatabaseManager.createConnection();
+		DatabaseManagerOLD.createConnection();
 		long startTime = System.currentTimeMillis();
-		
-		for(int i=1;i<=200;i++) {
-		DatabaseManager.createConnection();
-		DatabaseManager.createConnection();
-		DatabaseManager.createConnection();
-		DatabaseManager.createConnection();
-		DatabaseManager.createConnection();
+
+		for (int i = 1; i <= 200; i++) {
+			DatabaseManagerOLD.createConnection();
+			DatabaseManagerOLD.createConnection();
+			DatabaseManagerOLD.createConnection();
+			DatabaseManagerOLD.createConnection();
+			DatabaseManagerOLD.createConnection();
 		}
-		
+
 		long endTime = System.currentTimeMillis();
-		
-		System.out.println("Duration: "+ (endTime-startTime));
+
+		System.out.println("Duration: " + (endTime - startTime));
 
 	}
 
