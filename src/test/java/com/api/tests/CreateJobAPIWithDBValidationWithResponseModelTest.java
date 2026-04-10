@@ -42,7 +42,7 @@ import com.database.model.MapJobProblemDBModel;
 
 import io.restassured.response.Response;
 
-public class CreateJobAPIWithDBValidationTest2 {
+public class CreateJobAPIWithDBValidationWithResponseModelTest {
 	
 	private CreateJobPayload createJobPayload;
 	private Customer customer;
@@ -124,8 +124,7 @@ public class CreateJobAPIWithDBValidationTest2 {
 		
 		MapJobProblemDBModel jobDataFromDB = MapJobProblemDao.getProblemDetails(tr_job_head_id);
 		Assert.assertEquals(createJobPayload.problems().get(0).id(), jobDataFromDB.getMst_problem_id());
-		Assert.assertEquals(createJobPayload.problems().get(0).remark(), jobDataFromDB.getRemark());
-			
+		Assert.assertEquals(createJobPayload.problems().get(0).remark(), jobDataFromDB.getRemark());		
 		
 	}
 
