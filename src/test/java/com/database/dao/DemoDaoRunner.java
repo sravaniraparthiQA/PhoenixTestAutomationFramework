@@ -13,17 +13,14 @@ import com.api.request.model.CustomerProduct;
 import com.database.model.CustomerAddressDBModel;
 import com.database.model.CustomerDBModel;
 import com.database.model.CustomerProductDBModel;
+import com.database.model.JobHeadDBModel;
 
 public class DemoDaoRunner {
 
 	public static void main(String[] args) throws SQLException {
 
-		CustomerProductDBModel customerProductData = CustomerProductDao.getProductInfoFromDB(244838);
-		System.out.println(customerProductData);
-		
-		CustomerProduct customerProduct = new CustomerProduct(getTimeWithDaysAgo(10), "12775811399831", "12775811399831", "12775811399831", 
-				getTimeWithDaysAgo(10), Product.NEXUS_2.getCode(), Model.NEXUS_2_BLUE.getCode());
-		System.out.println(customerProduct);
+		JobHeadDBModel jobHeadDBModel = JobHeadDao.getDataFromJobHead(244852);
+		System.out.println(jobHeadDBModel);
 	}
 
 }
