@@ -1,38 +1,28 @@
 package com.api.tests;
 
+import static com.api.utils.SpecUtil.requestSpecWithAuth;
+import static com.api.utils.SpecUtil.responseSpec_OK;
 import static io.restassured.RestAssured.given;
+import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.startsWith;
 
-import static org.hamcrest.Matchers.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Random;
-
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.api.constant.Model;
-import com.api.constant.OEM;
-import com.api.constant.Platform;
-import com.api.constant.Problem;
-import com.api.constant.Product;
 import com.api.constant.Role;
-import com.api.constant.ServiceLocation;
-import com.api.constant.Warranty_Status;
 import com.api.request.model.CreateJobPayload;
 import com.api.request.model.Customer;
-import com.api.request.model.CustomerAddress;
-import com.api.request.model.CustomerProduct;
-import com.api.request.model.Problems;
-import com.api.utils.DateTimeUtil;
 import com.api.utils.FakerDataGenerator;
-import com.github.javafaker.Faker;
-
-import static com.api.utils.DateTimeUtil.*;
-import static com.api.utils.SpecUtil.*;
-
-import static io.restassured.module.jsv.JsonSchemaValidator.*;
+import com.database.dao.CustomerAddressDao;
+import com.database.dao.CustomerDao;
+import com.database.dao.JobHeadDao;
+import com.database.dao.MapJobProblemDao;
+import com.database.model.CustomerAddressDBModel;
+import com.database.model.CustomerDBModel;
+import com.database.model.JobHeadDBModel;
+import com.database.model.MapJobProblemDBModel;
 
 public class CreateJobAPITestWithFakerData {
 
@@ -50,7 +40,7 @@ public class CreateJobAPITestWithFakerData {
 			"smoke" })
 	public void createJobAPITest() {
 
-		given()
+		int customerId = given()
 			.spec(requestSpecWithAuth(Role.FD, createJobPayload))
 		.when()
 			.post("/job/create")
@@ -58,8 +48,36 @@ public class CreateJobAPITestWithFakerData {
 			.spec(responseSpec_OK())
 			.body(matchesJsonSchemaInClasspath("response-schema/CreateJobAPIResponseSchema.json"))
 			.body("message", equalTo("Job created successfully. ")).body("data.mst_service_location_id", equalTo(1))
-			.body("data.job_number", startsWith("JOB_"));
-
+			.body("data.job_number", startsWith("JOB_"))
+			.extract().body().jsonPath().getInt("data.tr_customer_id");
+		
+		Customer expectedCustomerData = createJobPayload.customer();
+		CustomerDBModel actualCustomerDataInDB = CustomerDao.getCustomerInfo(customerId);
+		
+		Assert.assertEquals(expectedCustomerData.first_name(), actualCustomerDataInDB.getFirst_name());
+		Assert.assertEquals(expectedCustomerData.last_name(), actualCustomerDataInDB.getLast_name());
+		Assert.assertEquals(expectedCustomerData.mobile_number(), actualCustomerDataInDB.getMobile_number());
+		Assert.assertEquals(expectedCustomerData.mobile_number_alt(), actualCustomerDataInDB.getMobile_number_alt());
+		Assert.assertEquals(expectedCustomerData.email_id(), actualCustomerDataInDB.getEmail_id());
+		Assert.assertEquals(expectedCustomerData.email_id_alt(), actualCustomerDataInDB.getEmail_id_alt());	
+		
+		CustomerAddressDBModel customerAddressDataFromDB =  CustomerAddressDao.getCustomerAddressInfo(actualCustomerDataInDB.getTr_customer_address_id());
+		
+		Assert.assertEquals(createJobPayload.customer_address().flat_number(), customerAddressDataFromDB.getFlat_number());
+		Assert.assertEquals(createJobPayload.customer_address().apartment_name(), customerAddressDataFromDB.getApartment_name());
+		Assert.assertEquals(createJobPayload.customer_address().street_name(), customerAddressDataFromDB.getStreet_name());
+		Assert.assertEquals(createJobPayload.customer_address().landmark(), customerAddressDataFromDB.getLandmark());
+		Assert.assertEquals(createJobPayload.customer_address().area(), customerAddressDataFromDB.getArea());
+		Assert.assertEquals(createJobPayload.customer_address().pincode(), customerAddressDataFromDB.getPincode());
+		Assert.assertEquals(createJobPayload.customer_address().country(), customerAddressDataFromDB.getCountry());
+		Assert.assertEquals(createJobPayload.customer_address().state(), customerAddressDataFromDB.getState());
+		
+		JobHeadDBModel jobHeadDataFromDB = JobHeadDao.getDataFromJobHead(customerId);
+		Assert.assertEquals(createJobPayload.mst_service_location_id(), jobHeadDataFromDB.getMst_service_location_id());
+		Assert.assertEquals(createJobPayload.mst_platform_id(), jobHeadDataFromDB.getMst_platform_id());
+		Assert.assertEquals(createJobPayload.mst_warrenty_status_id(), jobHeadDataFromDB.getMst_warrenty_status_id());
+		Assert.assertEquals(createJobPayload.mst_oem_id(), jobHeadDataFromDB.getMst_oem_id());
+		
 	}
 
 }
