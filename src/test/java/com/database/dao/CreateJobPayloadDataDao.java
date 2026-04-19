@@ -58,6 +58,9 @@ public class CreateJobPayloadDataDao {
 
 							""";
 
+	private CreateJobPayloadDataDao() {
+		
+	}
 	public static List<CreateJobBean> getCreateJobPayloadData() {
 		// I need the connection --->DatabaseManager
 		Connection conn;
