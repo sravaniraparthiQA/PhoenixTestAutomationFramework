@@ -14,25 +14,26 @@ import org.testng.annotations.Test;
 import com.api.constant.Role;
 import com.api.request.model.CreateJobPayload;
 import com.api.request.model.Customer;
+import com.api.services.JobService;
 import com.api.utils.FakerDataGenerator;
 import com.database.dao.CustomerAddressDao;
 import com.database.dao.CustomerDao;
 import com.database.dao.JobHeadDao;
-import com.database.dao.MapJobProblemDao;
 import com.database.model.CustomerAddressDBModel;
 import com.database.model.CustomerDBModel;
 import com.database.model.JobHeadDBModel;
-import com.database.model.MapJobProblemDBModel;
 
 public class CreateJobAPITestWithFakerData {
 
 	private CreateJobPayload createJobPayload;
 	private final static String COUNTRY = "India";
+	private JobService jobService;
 
-	@BeforeMethod(description = "Creating the create job api request payload")
+	@BeforeMethod(description = "Creating the create job api request payload and instantiating the Job Service")
 	public void setup() {
 
 		createJobPayload = FakerDataGenerator.generateFakeCreateJobData();
+		jobService = new JobService();
 
 	}
 
@@ -40,10 +41,7 @@ public class CreateJobAPITestWithFakerData {
 			"smoke" })
 	public void createJobAPITest() {
 
-		int customerId = given()
-			.spec(requestSpecWithAuth(Role.FD, createJobPayload))
-		.when()
-			.post("/job/create")
+		int customerId = jobService.createJob(Role.FD, createJobPayload)
 		.then()
 			.spec(responseSpec_OK())
 			.body(matchesJsonSchemaInClasspath("response-schema/CreateJobAPIResponseSchema.json"))

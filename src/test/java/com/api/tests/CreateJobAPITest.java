@@ -1,8 +1,12 @@
 package com.api.tests;
 
+import static com.api.utils.DateTimeUtil.getTimeWithDaysAgo;
+import static com.api.utils.SpecUtil.requestSpecWithAuth;
+import static com.api.utils.SpecUtil.responseSpec_OK;
 import static io.restassured.RestAssured.given;
-
-import static org.hamcrest.Matchers.*;
+import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.startsWith;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,22 +27,20 @@ import com.api.request.model.Customer;
 import com.api.request.model.CustomerAddress;
 import com.api.request.model.CustomerProduct;
 import com.api.request.model.Problems;
-import static com.api.utils.DateTimeUtil.*;
-import static com.api.utils.SpecUtil.*;
-
-import static io.restassured.module.jsv.JsonSchemaValidator.*;
+import com.api.services.JobService;
 
 public class CreateJobAPITest {
 	
+	private JobService jobService;
 	private CreateJobPayload createJobPayload;
 	
-	@BeforeMethod(description = "Creating the create job api request payload")
+	@BeforeMethod(description = "Creating the create job api request payload and instantiating the Job Service")
 	public void setup() {
 		
 		Customer customer = new Customer("Sravani", "Raparthi", "9618096697", "", "sravaniraparthis24@gmail.com", "");
 		CustomerAddress customerAddress = new CustomerAddress("Flat 206", "Pushkardham", "Hanuman Nagar", "Morampudi", "Navaram", "533107", "India", "Rajahmundry");
 		
-		CustomerProduct customerProduct = new CustomerProduct(getTimeWithDaysAgo(10), "10665811391521", "10665811391521", "10665811391521", 
+		CustomerProduct customerProduct = new CustomerProduct(getTimeWithDaysAgo(10), "10665811401521", "10665811401521", "10665811401521", 
 				getTimeWithDaysAgo(10), Product.NEXUS_2.getCode(), Model.NEXUS_2_BLUE.getCode());
 		
 		Problems problems = new Problems(Problem.SMARTPHONE_IS_RUNNING_SLOW.getCode(), "Battery issue");
@@ -47,16 +49,14 @@ public class CreateJobAPITest {
 		
 		createJobPayload = new CreateJobPayload(ServiceLocation.SERVICE_LOCATION_A.getCode(), Platform.FRONT_DESK.getCode(), 
 				Warranty_Status.IN_WARRENTY.getCode(), OEM.GOOGLE.getCode(), customer, customerAddress, customerProduct, problemsList);
+		jobService = new JobService();
 		
 	}
 	
 	@Test(description = "Verify if the create job api is able to create Inwarranty job", groups = {"api", "regression", "smoke"})
 	public void createJobAPITest() {
 	
-		given()
-			.spec(requestSpecWithAuth(Role.FD, createJobPayload))
-		.when()
-			.post("/job/create")
+		jobService.createJob(Role.FD, createJobPayload)
 		.then()
 			.spec(responseSpec_OK())
 			.body(matchesJsonSchemaInClasspath("response-schema/CreateJobAPIResponseSchema.json"))
