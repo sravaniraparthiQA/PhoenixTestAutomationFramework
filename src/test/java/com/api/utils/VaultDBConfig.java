@@ -2,6 +2,9 @@ package com.api.utils;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.bettercloud.vault.Vault;
 import com.bettercloud.vault.VaultConfig;
 import com.bettercloud.vault.VaultException;
@@ -11,12 +14,16 @@ public class VaultDBConfig {
 
 	public static VaultConfig vaultConfig;
 	public static Vault vault;
+	
+	private static final Logger LOGGER = LogManager.getLogger(VaultDBConfig.class);
+
 
 	static {
 		try {
 			vaultConfig = new VaultConfig().address(System.getenv("VAULT_SERVER")).token(System.getenv("VAULT_TOKEN")).build();
 
 		} catch (VaultException e) {
+			LOGGER.error("Something went wrong with the Vault Config", e);
 			e.printStackTrace();
 		}
 
@@ -35,6 +42,7 @@ public class VaultDBConfig {
 
 			//negative scenario: exception occured
 		} catch (VaultException e) {
+			LOGGER.error("Something went wrong when reading the vault response", e);
 			e.printStackTrace();
 			return null; //if anything goes wrong return null
 		}
@@ -44,6 +52,7 @@ public class VaultDBConfig {
 
 		String secretValue = dataMap.get(key);
 
+		LOGGER.info("Secret found in the vault");
 		return secretValue;
 
 	}

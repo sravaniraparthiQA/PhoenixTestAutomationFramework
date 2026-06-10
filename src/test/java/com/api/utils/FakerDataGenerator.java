@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.api.request.model.CreateJobPayload;
 import com.api.request.model.Customer;
 import com.api.request.model.CustomerAddress;
@@ -28,12 +31,16 @@ public class FakerDataGenerator {
 
 	private final static int VALID_PROBLEMS_ID[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 16, 17, 19, 20, 22, 24,
 			26, 28, 29 };
+	
+	private static final Logger LOGGER = LogManager.getLogger(FakerDataGenerator.class);
 
 	private FakerDataGenerator() {
 		// private constructor!
 	}
 
 	public static CreateJobPayload generateFakeCreateJobData() {
+		LOGGER.info("Generating the fake payload for Create job");
+		
 		Customer customer = generateFakeCustomerData();
 		CustomerAddress customerAddress = generateFakeCustomerAddressData();
 		CustomerProduct customerProduct = generateFakeCustomerProductData();
@@ -44,6 +51,7 @@ public class FakerDataGenerator {
 	}
 
 	public static Iterator<CreateJobPayload> generateFakeCreateJobData(int count) {
+		LOGGER.info("Generating the fake {} payload for Create job",count);
 
 		List<CreateJobPayload> payloadList = new ArrayList<CreateJobPayload>();
 
