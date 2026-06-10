@@ -26,7 +26,7 @@ private AuthService authService;
 			dataProviderClass = com.dataproviders.DataProviderUtils.class, dataProvider = "LoginAPIJsonDataProvider" )
 	//After giving dataProviderClass & dataProvider the @Test methods become parameterized, hence we need to pass the parameters
 
-	public void loginAPITest(UserCredentials userCredentials) {
+	public void loginAPITest(UserBean userCredentials) {
 		//inside a list of dataProviderClass, each one in list is nothing but an ref variable of an UserBean object hence passing ref variable of UserBean type as parameter here
 		
 		authService.login(userCredentials)

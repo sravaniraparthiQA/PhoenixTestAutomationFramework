@@ -5,13 +5,18 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.api.services.AuthService;
 import com.database.DatabaseManager;
 import com.database.model.CustomerDBModel;
 
 public class CustomerDao {
 	// Executing the query for the tr_customer table! which will get the details of
 	// the customer!
-
+	private static final Logger LOGGER = LogManager.getLogger(CustomerDao.class);
+	
 	private static final String CUSTOMER_DETAIL_QUERY = """
 			select * from tr_customer where id = ?
 			""";
@@ -22,9 +27,13 @@ public class CustomerDao {
 	public static CustomerDBModel getCustomerInfo(int customerId) {
 		CustomerDBModel customerDBModel = null;
 		try {
+			LOGGER.info("Getting the Connection from the Database Manager");
+
 			Connection conn = DatabaseManager.getConnection();
 			PreparedStatement preparedstatement = conn.prepareStatement(CUSTOMER_DETAIL_QUERY);
 			preparedstatement.setInt(1, customerId);
+			LOGGER.info("Executing the SQL Query {}",CUSTOMER_DETAIL_QUERY);
+			
 			ResultSet resultSet = preparedstatement.executeQuery();
 		
 			while (resultSet.next()) {
@@ -42,6 +51,8 @@ public class CustomerDao {
 		}
 		
 		catch (SQLException e) {
+			LOGGER.error("Cannot convert the result set to CustomerDBModel bean",e);
+			
 			e.printStackTrace();
 		}
 
